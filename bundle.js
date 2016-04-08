@@ -44,11 +44,19 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var $, FRAMERATE, canvas, canvas_height, canvas_width, ctx, draw;
+	var $, BACKGROUND_COLOR, FRAMERATE, GRID_HEIGHT, GRID_STEP, GRID_WIDTH, NODE_COLOR, NODE_SIZE, Node, canvas, canvas_height, canvas_width, ctx, draw, draw_node, draw_node_line, grid, i, j, k, l, random_interval, ref, ref1;
 
 	$ = __webpack_require__(1);
 
+	Node = __webpack_require__(3);
+
 	FRAMERATE = 60;
+
+	BACKGROUND_COLOR = "#FFF";
+
+	NODE_COLOR = "#0F0";
+
+	NODE_SIZE = 6;
 
 	canvas_width = 500;
 
@@ -58,12 +66,90 @@
 
 	ctx = canvas.getContext("2d");
 
+	ctx.lineWidth = 2;
+
+	GRID_WIDTH = 10;
+
+	GRID_HEIGHT = 10;
+
+	GRID_STEP = canvas_width / GRID_WIDTH;
+
+	grid = {};
+
+	for (i = k = 0, ref = GRID_WIDTH; k <= ref; i = k += 1) {
+	  grid[i] = {};
+	  for (j = l = 0, ref1 = GRID_HEIGHT; l <= ref1; j = l += 1) {
+	    grid[i][j] = new Node(i * GRID_STEP, j * GRID_STEP);
+	  }
+	}
+
+	draw_node_line = function(i1, j1, i2, j2) {
+	  if (!grid[i2] || !grid[i2][j2]) {
+	    return;
+	  }
+	  ctx.beginPath();
+	  ctx.moveTo(grid[i1][j1].x, grid[i1][j1].y);
+	  ctx.lineTo(grid[i2][j2].x, grid[i2][j2].y);
+	  return ctx.stroke();
+	};
+
+	draw_node = function(i, j) {
+	  var x, y;
+	  ctx.strokeStyle = "#DDD";
+	  draw_node_line(i, j, i - 1, j);
+	  draw_node_line(i, j, i + 1, j);
+	  draw_node_line(i, j, i, j - 1);
+	  draw_node_line(i, j, i, j + 1);
+	  x = grid[i][j].x;
+	  y = grid[i][j].y;
+	  ctx.strokeStyle = NODE_COLOR;
+	  ctx.beginPath();
+	  ctx.arc(x, y, NODE_SIZE, 0, 2 * Math.PI);
+	  return ctx.stroke();
+	};
+
+	random_interval = function(min, max) {
+	  return min + Math.random() * (max - min);
+	};
+
 	draw = function() {
-	  ctx.fillStyle = "#000";
-	  return ctx.fillRect(0, 0, canvas_width, canvas_height);
+	  var m, ref2, results;
+	  ctx.fillStyle = BACKGROUND_COLOR;
+	  ctx.fillRect(0, 0, canvas_width, canvas_height);
+	  results = [];
+	  for (i = m = 0, ref2 = GRID_WIDTH; m <= ref2; i = m += 1) {
+	    results.push((function() {
+	      var n, ref3, results1;
+	      results1 = [];
+	      for (j = n = 0, ref3 = GRID_HEIGHT; n <= ref3; j = n += 1) {
+	        grid[i][j].update();
+	        results1.push(draw_node(i, j));
+	      }
+	      return results1;
+	    })());
+	  }
+	  return results;
 	};
 
 	setInterval(draw, 1000 / 60);
+
+	$("#run_button").click(function() {
+	  var m, ref2, results, x, y;
+	  results = [];
+	  for (i = m = 0, ref2 = GRID_WIDTH; m <= ref2; i = m += 1) {
+	    results.push((function() {
+	      var n, ref3, results1;
+	      results1 = [];
+	      for (j = n = 0, ref3 = GRID_HEIGHT; n <= ref3; j = n += 1) {
+	        x = random_interval(-0.5, 0.5);
+	        y = random_interval(-0.5, 0.5);
+	        results1.push(grid[i][j].add_velocity(x, y));
+	      }
+	      return results1;
+	    })());
+	  }
+	  return results;
+	});
 
 
 /***/ },
@@ -9918,6 +10004,46 @@
 
 	return jQuery;
 	}));
+
+
+/***/ },
+/* 3 */
+/***/ function(module, exports) {
+
+	var Node;
+
+	Node = (function() {
+	  function Node(x, y) {
+	    this.x = x;
+	    this.y = y;
+	    this.velocity_x = 0;
+	    this.velocity_y = 0;
+	    this.friction = 0.96;
+	  }
+
+	  Node.prototype.update = function() {
+	    this.x += this.velocity_x;
+	    this.y += this.velocity_y;
+	    this.velocity_x *= this.friction;
+	    return this.velocity_y *= this.friction;
+	  };
+
+	  Node.prototype.add_velocity = function(x, y) {
+	    if (x == null) {
+	      x = 0;
+	    }
+	    if (y == null) {
+	      y = 0;
+	    }
+	    this.velocity_x += x;
+	    return this.velocity_y += y;
+	  };
+
+	  return Node;
+
+	})();
+
+	module.exports = Node;
 
 
 /***/ }
