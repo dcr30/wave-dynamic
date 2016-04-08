@@ -46,9 +46,9 @@
 
 	var $, BACKGROUND_COLOR, FRAMERATE, GRID_HEIGHT, GRID_STEP, GRID_WIDTH, NODE_COLOR, NODE_SIZE, Node, canvas, canvas_height, canvas_width, ctx, draw, draw_node, draw_node_line, grid, i, j, k, l, random_interval, ref, ref1;
 
-	$ = __webpack_require__(1);
+	Node = __webpack_require__(1);
 
-	Node = __webpack_require__(3);
+	$ = __webpack_require__(2);
 
 	FRAMERATE = 60;
 
@@ -154,12 +154,52 @@
 
 /***/ },
 /* 1 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	module.exports = __webpack_require__(2);
+	var Node;
+
+	Node = (function() {
+	  function Node(x, y) {
+	    this.x = x;
+	    this.y = y;
+	    this.velocity_x = 0;
+	    this.velocity_y = 0;
+	    this.friction = 0.96;
+	  }
+
+	  Node.prototype.update = function() {
+	    this.x += this.velocity_x;
+	    this.y += this.velocity_y;
+	    this.velocity_x *= this.friction;
+	    return this.velocity_y *= this.friction;
+	  };
+
+	  Node.prototype.add_velocity = function(x, y) {
+	    if (x == null) {
+	      x = 0;
+	    }
+	    if (y == null) {
+	      y = 0;
+	    }
+	    this.velocity_x += x;
+	    return this.velocity_y += y;
+	  };
+
+	  return Node;
+
+	})();
+
+	module.exports = Node;
+
 
 /***/ },
 /* 2 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(3);
+
+/***/ },
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;/*!
@@ -10004,46 +10044,6 @@
 
 	return jQuery;
 	}));
-
-
-/***/ },
-/* 3 */
-/***/ function(module, exports) {
-
-	var Node;
-
-	Node = (function() {
-	  function Node(x, y) {
-	    this.x = x;
-	    this.y = y;
-	    this.velocity_x = 0;
-	    this.velocity_y = 0;
-	    this.friction = 0.96;
-	  }
-
-	  Node.prototype.update = function() {
-	    this.x += this.velocity_x;
-	    this.y += this.velocity_y;
-	    this.velocity_x *= this.friction;
-	    return this.velocity_y *= this.friction;
-	  };
-
-	  Node.prototype.add_velocity = function(x, y) {
-	    if (x == null) {
-	      x = 0;
-	    }
-	    if (y == null) {
-	      y = 0;
-	    }
-	    this.velocity_x += x;
-	    return this.velocity_y += y;
-	  };
-
-	  return Node;
-
-	})();
-
-	module.exports = Node;
 
 
 /***/ }

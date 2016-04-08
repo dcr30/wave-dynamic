@@ -1,5 +1,5 @@
-$ = require "jquery"
 Node = require "./Node.coffee"
+$ = require "jquery"
 
 FRAMERATE = 60
 BACKGROUND_COLOR = "#FFF"

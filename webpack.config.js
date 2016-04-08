@@ -1,19 +1,23 @@
+var webpack = require("webpack");
 var BowerWebpackPlugin = require("bower-webpack-plugin");
 
 module.exports = {
 	entry: "./src/app.coffee",
 	output: {
 		filename: "bundle.js",
-		path: "."
+		path: __dirname
 	},
 	resolve: {
-		modulesDirectories: ["bower_components"]
+		modulesDirectories: [__dirname + "/bower_components"]
 	},
 	module: {
 		loaders: [
+			{ test: /\.css$/, loader: "style!css" },
 			{ test: /\.coffee$/, loader: "coffee-loader" },
 			{ test: /\.(coffee\.md|litcoffee)$/, loader: "coffee-loader?literate" }
 		]
 	},
-	plugins: [new BowerWebpackPlugin()]
+	plugins: [new BowerWebpackPlugin({
+		excludes: /.*\.less/
+	})]
 };
