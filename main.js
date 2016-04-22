@@ -1,10 +1,10 @@
-const FRAMERATE = 60;
+const FRAMERATE = 100;
 const BACKGROUND_COLOR = "#FFF";
 // Узел
 const NODE_STEP = 50; 			// Расстояние между узлами
 const NODE_COLOR = "#0F0";		// Цвет узла
 const NODE_SIZE = 6;			// Размер узла
-const NODE_LINE_WIDTH = 2;		// Ширина линии, соединяющей узлы
+const NODE_LINE_WIDTH = 1;		// Ширина линии, соединяющей узлы
 const NODE_LINE_COLOR = "#DDD";	// Цвет линии, соединяющей узлы
 // Размеры canvas'а
 const CANVAS_WIDTH = 500;
@@ -67,10 +67,10 @@ var Grid = function (width, height) {
 	this.draw = function(ctx) {
 		for (var i = 0; i < width; i++) {
 			for (var j = 0; j < height; j++) {
-				drawLineBetweenNodes(ctx, i + 1, j);
-				drawLineBetweenNodes(ctx, i - 1, j);
-				drawLineBetweenNodes(ctx, i, j + 1);
-				drawLineBetweenNodes(ctx, i, j - 1);
+				drawLineBetweenNodes(ctx, i, j, i + 1, j);
+				drawLineBetweenNodes(ctx, i, j, i - 1, j);
+				drawLineBetweenNodes(ctx, i, j, i, j + 1);
+				drawLineBetweenNodes(ctx, i, j, i, j - 1);
 				grid[i][j].draw(ctx);
 			}
 		}
@@ -98,9 +98,8 @@ function init() {
 
 	$("#start_button").click(function () {
 		$(this).text(function(i, text) {
-			isRunning = text === "Запустить";
+			isRunning = text === "Запустить";			
 			return isRunning ? "Остановить" : "Запустить";
 		});
-		
 	});
 }
