@@ -3,17 +3,18 @@
 <head>
 	<meta charset="utf-8">
 	<title>Волновая динамика</title>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" href="bootstrap.min.css">
+	<script type="text/javascript" src="jquery-2.2.3.js"></script>
+	<script type="text/javascript" src="main.js"></script>
 </head>
-<body>
+<body onload="init();">
 	<div class="container">
 		<h1 class="text-center">Волновая динамика</h1>
 		<div class="text-center">
-			<button class="btn btn-primary" id="run_button">Запустить</button>
+			<button class="btn btn-primary" id="start_button">Запустить</button>
 			<br><br>
-			<canvas id="canvas" width="500" height="500"></canvas>
+			<canvas width="500" height="500"></canvas>
 		</div>
 	</div>
 </body>
-<script type="text/javascript" src="bundle.js"></script>
 </html>
