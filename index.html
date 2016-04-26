@@ -9,25 +9,20 @@
 </head>
 <body onload="init();">
 	<div class="container">
-		<div class="col-xs-6 col-xs-offset-3">
+		<div class="col-md-6 col-md-offset-3">
 			<h1 class="text-center">Волновая динамика</h1>
-			<div class="panel panel-default">
-				<div class="panel-body">
-					<div class="col-xs-6">
-						<label>Частота</label>
-						<input id="fx" type="text" class="form-control" placeholder="По X" value="0.01">
-					</div>
-					<div class="col-xs-6">
-						<label>Амплитуда</label>
-						<input id="ax" type="text" class="form-control" placeholder="По X" value="20">
-						<input id="ay" type="text" class="form-control" placeholder="По Y" value="20">
-					</div>
-					<!-- <button class="btn btn-primary">Запустить</button> -->
-					<div class="text-center">
-						<canvas width="500" height="500"></canvas>
-					</div>					
-				</div>
-			</div>	
+			<div class="col-md-5">
+				<input id="wave_frequency" type="text" class="form-control" placeholder="Частота колебаний" value="2">
+			</div>
+			<div class="col-md-5">
+				<input id="wave_amplitude" type="text" class="form-control" placeholder="Амплитуда" value="20">
+			</div>
+			<div class="col-md-2">
+				<a href="#" class="btn btn-success" id="start_button">Запустить</a>
+			</div>
+			<div class="text-center">
+				<canvas width="500" height="500"></canvas>
+			</div>					
 		</div>
 	</div>
 </body>

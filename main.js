@@ -10,7 +10,17 @@ const NODE_LINE_COLOR = "#DDD";	// Цвет линии, соединяющей �
 const CANVAS_WIDTH = 500;
 const CANVAS_HEIGHT = 500;
 
+var waveParams = {
+	amplitude: 20,
+	frequency: 2
+}
+
 var isRunning = false;
+
+// Функция смещения для плоской волны
+function xi(x, time, amplitude, frequency) {
+	return amplitude * Math.cos(frequency * (time - x / frequency))
+}
 
 // Класс для узла сетки
 var Node = function (x, y) {
@@ -20,20 +30,24 @@ var Node = function (x, y) {
 	this.vx = 0;
 	this.vy = 0;
 
-	
 	this.t = 0;
 
-	this.draw = function (ctx, fX, fY, aX, aY) {
-		// Движение 
+	this.draw = function (ctx, deltaTime) {
 		if (isRunning) {
-			this.x = x + Math.sin(performance.now() * fX + x * 2) * aX;
-			this.y = y + Math.cos(performance.now() * fX + x * 2) * aY;
+			this.t += deltaTime;
 		}
 
-		var distance = Math.min(1, Math.abs(this.x - x) / NODE_STEP * 2);
+		// Смещение
+		var offset = xi(this.x / NODE_STEP, this.t, waveParams.amplitude, waveParams.frequency);
+		this.x = x + offset;
+		//this.y = y + Math.cos(performance.now() * fX + x * 2) * aY;
+
+		// Цвет в зависимости от смещения
+		var distance = Math.min(1, Math.abs(offset) / waveParams.amplitude);
 		var r = Math.round(255 - 255 * distance);
 		var g = Math.round(255 * distance);
-		ctx.strokeStyle = "rgb(255, " + r +", " + g + ")";//NODE_COLOR;
+		var b = 255;
+		ctx.strokeStyle = "rgb(" + r + ", " + g +", " + b + ")";//NODE_COLOR;
 		ctx.fillStyle = ctx.strokeStyle;
 		ctx.beginPath();
 		ctx.arc(this.x, this.y, NODE_SIZE, 0, 2 * Math.PI);
@@ -74,7 +88,7 @@ var Grid = function (width, height) {
 		ctx.stroke();
 	}
 
-	this.draw = function(ctx) {
+	this.draw = function(ctx, deltaTime) {
 		for (var i = 0; i < width; i++) {
 			for (var j = 0; j < height; j++) {
 				drawLineBetweenNodes(ctx, i, j, i + 1, j);
@@ -82,7 +96,7 @@ var Grid = function (width, height) {
 				drawLineBetweenNodes(ctx, i, j, i, j + 1);
 				drawLineBetweenNodes(ctx, i, j, i, j - 1);
 
-				grid[i][j].draw(ctx, this.fX, this.fY, this.aX, this.aY);
+				grid[i][j].draw(ctx, deltaTime);
 			}
 		}
 	}
@@ -97,35 +111,42 @@ function init() {
 	var gridHeight = Math.round(CANVAS_HEIGHT / NODE_STEP);
 	var grid = new Grid(gridWidth, gridHeight);
 
-	var draw = function () {
+	var lastNow;
+	var draw = function (now) {
+		requestAnimationFrame(draw);
+
+		// deltaTime
+		var deltaTime = 0;
+		if (lastNow) {
+			deltaTime = (now - lastNow) / 1000;
+		}
+		lastNow = now;
+
 		// Очистка 
 		ctx.fillStyle = BACKGROUND_COLOR;
 		ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
 
 		// Отрисовка сетки
-		grid.draw(ctx);		
+		grid.draw(ctx, deltaTime);		
 	}
-	setInterval(draw, FRAMERATE / 1000);
+	requestAnimationFrame(draw);
+	//setInterval(draw, FRAMERATE / 1000);
 
 	$("#start_button").click(function () {
 		$(this).text(function(i, text) {
+			$(this).toggleClass("btn-danger");
 			isRunning = text === "Запустить";			
 			return isRunning ? "Остановить" : "Запустить";
 		});
 	});
-	isRunning = true;
 
-	$("#fx").change(function () {
+	$("#wave_frequency").change(function () {
 		var val = $(this).val();
-		grid.fX = Number(val);
+		waveParams.frequency = Number(val);
 	});
 
-	$("#ax").change(function () {
+	$("#wave_amplitude").change(function () {
 		var val = $(this).val();
-		grid.aX = Number(val);
+		waveParams.amplitude = Number(val);
 	});
-	$("#ay").change(function () {
-		var val = $(this).val();
-		grid.aY = Number(val);
-	});		
 }
