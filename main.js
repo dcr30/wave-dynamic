@@ -1,5 +1,5 @@
 const FRAMERATE = 100;
-const BACKGROUND_COLOR = "#FFF";
+const BACKGROUND_COLOR = "#FBFBFB";
 // Узел
 const NODE_STEP = 50; 			// Расстояние между узлами
 const NODE_COLOR = "#0F0";		// Цвет узла
@@ -11,8 +11,9 @@ const CANVAS_WIDTH = 500;
 const CANVAS_HEIGHT = 500;
 
 var waveParams = {
+	frequency: 2,
 	amplitude: 20,
-	frequency: 2
+	transverse: false
 }
 
 var isRunning = false;
@@ -39,7 +40,11 @@ var Node = function (x, y) {
 
 		// Смещение
 		var offset = xi(this.x / NODE_STEP, this.t, waveParams.amplitude, waveParams.frequency);
-		this.x = x + offset;
+		if (waveParams.transverse) {
+			this.y = y + offset;
+		} else {
+			this.x = x + offset;			
+		}
 		//this.y = y + Math.cos(performance.now() * fX + x * 2) * aY;
 
 		// Цвет в зависимости от смещения
