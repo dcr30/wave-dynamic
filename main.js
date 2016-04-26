@@ -23,16 +23,21 @@ var Node = function (x, y) {
 	
 	this.t = 0;
 
-	this.draw = function (ctx, dt) {
+	this.draw = function (ctx, fX, fY, aX, aY) {
 		// Движение 
 		if (isRunning) {
-			this.x = x + Math.sin(performance.now() / 100 + x * 2) * 20;
-			//this.y = t
+			this.x = x + Math.sin(performance.now() * fX + x * 2) * aX;
+			this.y = y + Math.cos(performance.now() * fX + x * 2) * aY;
 		}
 
-		ctx.strokeStyle = NODE_COLOR;
+		var distance = Math.min(1, Math.abs(this.x - x) / NODE_STEP * 2);
+		var r = Math.round(255 - 255 * distance);
+		var g = Math.round(255 * distance);
+		ctx.strokeStyle = "rgb(255, " + r +", " + g + ")";//NODE_COLOR;
+		ctx.fillStyle = ctx.strokeStyle;
 		ctx.beginPath();
 		ctx.arc(this.x, this.y, NODE_SIZE, 0, 2 * Math.PI);
+		ctx.fill();
 		ctx.stroke();
 	}
 }
@@ -41,6 +46,11 @@ var Node = function (x, y) {
 var Grid = function (width, height) {
 	this.width = width;
 	this.height = height;
+
+	this.fX = 0.002;
+	this.fY = 0.01;
+	this.aX = 20;
+	this.aY = 20;
 
 	var grid = new Array(width);
 	for (var i = 0; i < width; i++) {
@@ -71,7 +81,8 @@ var Grid = function (width, height) {
 				drawLineBetweenNodes(ctx, i, j, i - 1, j);
 				drawLineBetweenNodes(ctx, i, j, i, j + 1);
 				drawLineBetweenNodes(ctx, i, j, i, j - 1);
-				grid[i][j].draw(ctx);
+
+				grid[i][j].draw(ctx, this.fX, this.fY, this.aX, this.aY);
 			}
 		}
 	}
@@ -102,4 +113,19 @@ function init() {
 			return isRunning ? "Остановить" : "Запустить";
 		});
 	});
+	isRunning = true;
+
+	$("#fx").change(function () {
+		var val = $(this).val();
+		grid.fX = Number(val);
+	});
+
+	$("#ax").change(function () {
+		var val = $(this).val();
+		grid.aX = Number(val);
+	});
+	$("#ay").change(function () {
+		var val = $(this).val();
+		grid.aY = Number(val);
+	});		
 }
